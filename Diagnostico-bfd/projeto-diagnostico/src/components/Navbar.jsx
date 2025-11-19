@@ -1,122 +1,133 @@
-// import { House, Link } from "lucide-react";
-// import { User } from "lucide-react";
-// import { ClipboardMinus } from "lucide-react";
-// import { Settings } from "lucide-react";
-// import { ImagePlus } from "lucide-react";
-// import { FilePlusCorner } from "lucide-react";
-// import { History } from "lucide-react";
-// import { UserPlus } from "lucide-react";
-// import { Routes, Route } from "react-router-dom";
+import { useState } from "react";
+import {
+  House,
+  Settings,
+  ImagePlus,
+  FilePlusCorner,
+  History,
+  UserPlus,
+  Menu,
+  X,
+} from "lucide-react";
 
-// function Navbar() {
-//   return (
-//     <div>
-//       <aside className="w-64 h-screen bg-white shadow-md p-6">
-//         <h2 className="text-xl font-bold mb-6">Painel</h2>
+import { Link } from "react-router-dom";
 
-//         <nav>
-//           <ul className="space-y-4 text-slate-950">
-//             <li><Link to="/dashboard" className="p-2 shadow-lg text-shadow-lg hover:bg-linear-to-r from-slate-200 to-slate-400 flex flex-row gap-2 rounded-md justify-start cursor-pointer" href="/dashboard  "><House size={24} />Dashboard</Link></li>
-//             <li><a className="p-2 shadow-lg text-shadow-lg hover:bg-linear-to-r from-slate-200 to-slate-400 flex flex-row gap-2 rounded-md justify-start" href="#"><ImagePlus size={24} /> Visualizar imagens</a></li>
-//             <li><a className="p-2 shadow-lg text-shadow-lg hover:bg-linear-to-r from-slate-200 to-slate-400 flex flex-row gap-2 rounded-md justify-start" href="#"><FilePlusCorner size={24}/> Gerar laudo</a></li>
-//             <li><a className="p-2 shadow-lg text-shadow-lg hover:bg-linear-to-r from-slate-200 to-slate-400 flex flex-row gap-2 rounded-md justify-start" href="#"><History size={24}/> Histórico de laudos</a></li>
-//             <li><Link to="/CadastroPacientes" className="btn p-2 shadow-lg text-shadow-lg hover:bg-linear-to-r from-slate-200 to-slate-400 flex flex-row gap-2 rounded-md justify-start cursor-pointer"><UserPlus size={24}/> Cadastrar paciente</Link></li>
-//             <li><a className="p-2 shadow-lg text-shadow-lg hover:bg-linear-to-r from-slate-200 to-slate-400 flex flex-row gap-2 rounded-md justify-start" href="#"><Settings size={24} /> Configurações</a></li>
-//           </ul>
-//         </nav>
-//       </aside>
-//     </div>
-//   );
-// }
-
-// export default Navbar;
-
-
-import { House } from "lucide-react";
-import { User } from "lucide-react";
-import { ClipboardMinus } from "lucide-react";
-import { Settings } from "lucide-react";
-import { ImagePlus } from "lucide-react";
-import { FilePlusCorner } from "lucide-react";
-import { History } from "lucide-react";
-import { UserPlus } from "lucide-react";
-
-import { Link } from "react-router-dom"; // ✔ CORRETO
-
-function Navbar() {
+function Navbar({ expanded, setExpanded }) {
   return (
-    <div>
-      <aside className="w-64 h-screen bg-white shadow-md p-6">
-        <h2 className="text-xl font-bold mb-6">Painel</h2>
+    <aside
+      className={`
+        h-screen bg-white shadow-md p-6 z-40 fixed top-0 left-0
+        transition-all duration-300 flex flex-col
+        ${expanded ? "w-64" : "w-20"}
+      `}
+    >
+      {/* Botão expandir */}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          setExpanded(!expanded);
+        }}
+        className="mb-6"
+      >
+        <Menu size={28} />
+      </button>
 
-        <nav>
-          <ul className="space-y-4 text-slate-950">
+      {/* <h2
+        className={`
+          text-xl font-bold mb-6 whitespace-nowrap
+          transition-all duration-300
+          ${expanded ? "opacity-100" : "opacity-0 w-0 overflow-hidden"}
+        `}
+      >
+        Painel
+      </h2> */}
 
-            {/* DASHBOARD */}
-            <li>
+      <nav>
+        <ul className="space-y-4 text-slate-950">
+          {[
+            { to: "/dashboard", icon: House, label: "Dashboard" },
+            { to: "/VisualizarImagens", icon: ImagePlus, label: "Visualizar imagens" },
+            { to: "/GerarLaudo", icon: FilePlusCorner, label: "Gerar laudo" },
+            { to: "/HistoricoLaudos", icon: History, label: "Histórico de laudos" },
+            { to: "/CadastroPacientes", icon: UserPlus, label: "Cadastrar paciente" },
+            { to: "/configuracoes", icon: Settings, label: "Configurações" },
+          ].map((item, i) => (
+            <li key={i}>
               <Link
-                to="/dashboard"
-                className="p-2 shadow-lg hover:bg-linear-to-r from-slate-200 to-slate-400 flex flex-row gap-2 rounded-md justify-start cursor-pointer"
+                to={item.to}
+                className="p-2 shadow-lg hover:bg-slate-200 flex flex-row gap-3 rounded-md cursor-pointer items-center"
               >
-                <House size={24} /> Dashboard
+                <item.icon size={24} className="min-w-6" />
+
+                <span
+                  className={`
+                    transition-all duration-300 text-nowrap
+                    ${expanded ? "opacity-100" : "opacity-0 w-0 overflow-hidden"}
+                  `}
+                >
+                  {item.label}
+                </span>
               </Link>
             </li>
+          ))}
+        </ul>
+      </nav>
 
-            {/* VISUALIZAR IMAGENS */}
-            <li>
-              <Link
-                to="/VisualizarImagens"
-                className="p-2 shadow-lg hover:bg-linear-to-r from-slate-200 to-slate-400 flex flex-row gap-2 rounded-md justify-start cursor-pointer"
-              >
-                <ImagePlus size={24} /> Visualizar imagens
-              </Link>
-            </li>
-
-            {/* GERAR LAUDO */}
-            <li>
-              <Link
-                to="/GerarLaudo"
-                className="p-2 shadow-lg hover:bg-linear-to-r from-slate-200 to-slate-400 flex flex-row gap-2 rounded-md justify-start cursor-pointer"
-              >
-                <FilePlusCorner size={24} /> Gerar laudo
-              </Link>
-            </li>
-
-            {/* HISTÓRICO DE LAUDOS */}
-            <li>
-              <Link
-                to="/HistoricoLaudos"
-                className="p-2 shadow-lg hover:bg-linear-to-r from-slate-200 to-slate-400 flex flex-row gap-2 rounded-md justify-start cursor-pointer"
-              >
-                <History size={24} /> Histórico de laudos
-              </Link>
-            </li>
-
-            {/* CADASTRAR PACIENTE */}
-            <li>
-              <Link
-                to="/CadastroPacientes"
-                className="p-2 shadow-lg hover:bg-linear-to-r from-slate-200 to-slate-400 flex flex-row gap-2 rounded-md justify-start cursor-pointer"
-              >
-                <UserPlus size={24} /> Cadastrar paciente
-              </Link>
-            </li>
-
-            {/* CONFIGURAÇÕES */}
-            <li>
-              <Link
-                to="/configuracoes"
-                className="p-2 shadow-lg hover:bg-linear-to-r from-slate-200 to-slate-400 flex flex-row gap-2 rounded-md justify-start cursor-pointer"
-              >
-                <Settings size={24} /> Configurações
-              </Link>
-            </li>
-
-          </ul>
-        </nav>
-      </aside>
+     {/* Footer */}
+<div
+  className={`mt-auto pt-6 border-t border-slate-300 w-full 
+    flex flex-col items-center transition-all duration-300
+  `}
+>
+  <div
+    className={`flex items-center transition-all duration-300
+      ${expanded ? "gap-3 w-full justify-start" : "justify-center"}
+    `}
+    style={{ minHeight: "60px" }} 
+  >
+    {/* Avatar */}
+    <div
+      className={`
+        rounded-full overflow-hidden shrink-0 flex items-center justify-center
+        ${expanded ? "w-10 h-10" : "w-12 h-12"}
+      `}
+    >
+      <img
+        src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80" 
+        alt="Usuário logado" 
+        class="inline-block size-8 rounded-full ring-2 ring-gray-900 outline -outline-offset-1 outline-white/10"
+      />
     </div>
+
+    {/* Dados apenas no modo expandido */}
+    {expanded && (
+      <div className="flex flex-col">
+        <p className="font-semibold">Usuário</p>
+        <p className="text-sm text-slate-600">user@email.com</p>
+      </div>
+    )}
+  </div>
+</div>
+
+    </aside>
   );
 }
 
-export default Navbar;
+export default function Layout({ children }) {
+  const [expanded, setExpanded] = useState(true);
+
+  return (
+    <div className="flex">
+      <Navbar expanded={expanded} setExpanded={setExpanded} />
+
+      <main
+        className={`
+          flex-1 p-6 transition-all duration-300
+          ${expanded ? "ml-64" : "ml-20"}
+        `}
+      >
+        {children}
+      </main>
+    </div>
+  );
+}

@@ -1,9 +1,7 @@
 import { useState } from "react";
 import Navbar from "../components/Navbar";
 
-
-
-export default function Dashboard() {
+export default function Dashboard({ expanded }) {
   const [usuarios, setUsuarios] = useState([]);
 
   const [form, setForm] = useState({
@@ -13,7 +11,6 @@ export default function Dashboard() {
     status: "Ativo",
   });
 
-  
   function gerarDataHora() {
     const agora = new Date();
     const data = agora.toLocaleDateString("pt-BR");
@@ -24,7 +21,6 @@ export default function Dashboard() {
     return `${data} ${hora}`;
   }
 
-  
   function cadastrar(e) {
     e.preventDefault();
 
@@ -44,11 +40,9 @@ export default function Dashboard() {
     });
   }
 
-  
   function remover(id) {
     setUsuarios(usuarios.filter((u) => u.id !== id));
   }
-
 
   const total = usuarios.length;
   const ativos = usuarios.filter((u) => u.status === "Ativo").length;
@@ -58,11 +52,14 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gray-100 flex">
-
-      
       <Navbar />
 
-      <main className="flex-1 p-6">
+      <main
+        className={`
+    flex-1 p-6 transition-all duration-300
+    ${expanded ? "md:ml-64" : "md:ml-20"}
+  `}
+      >
         <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-6">
@@ -82,11 +79,13 @@ export default function Dashboard() {
           </div>
         </div>
 
-      
         <div className="bg-white p-4 shadow rounded mb-6">
           <h2 className="text-lg font-bold mb-4">Novo Usuário</h2>
 
-          <form onSubmit={cadastrar} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <form
+            onSubmit={cadastrar}
+            className="grid grid-cols-1 md:grid-cols-2 gap-4"
+          >
             <input
               type="text"
               placeholder="Nome"
@@ -132,7 +131,6 @@ export default function Dashboard() {
           </form>
         </div>
 
-        
         <div className="bg-white p-4 shadow rounded">
           <h2 className="text-lg font-bold mb-4">Usuários Cadastrados</h2>
 
@@ -165,11 +163,9 @@ export default function Dashboard() {
                       Excluir
                     </button>
                   </td>
-
                 </tr>
               ))}
             </tbody>
-
           </table>
         </div>
       </main>

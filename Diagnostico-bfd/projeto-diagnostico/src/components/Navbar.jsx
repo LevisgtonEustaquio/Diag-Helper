@@ -27,9 +27,9 @@ function Navbar({ expanded, setExpanded }) {
           e.stopPropagation();
           setExpanded(!expanded);
         }}
-        className="mb-6"
+        className="cursor-pointer w-2 "
       >
-        <Menu size={28} />
+        <Menu size={24} />
       </button>
 
       {/* <h2

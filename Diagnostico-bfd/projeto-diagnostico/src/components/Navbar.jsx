@@ -13,6 +13,9 @@ import {
 import { Link } from "react-router-dom";
 
 function Navbar({ expanded, setExpanded }) {
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
+
+
   return (
     <aside
       className={`
@@ -46,7 +49,7 @@ function Navbar({ expanded, setExpanded }) {
         <ul className="space-y-4 text-slate-950">
           {[
             { to: "/dashboard", icon: House, label: "Dashboard" },
-            { to: "/VisualizarImagens", icon: ImagePlus, label: "Visualizar imagens" },
+            // { to: "/VisualizarImagens", icon: ImagePlus, label: "Visualizar imagens" },
             { to: "/GerarLaudo", icon: FilePlusCorner, label: "Gerar laudo" },
             { to: "/HistoricoLaudos", icon: History, label: "Histórico de laudos" },
             { to: "/CadastroPacientes", icon: UserPlus, label: "Cadastrar paciente" },
@@ -102,8 +105,8 @@ function Navbar({ expanded, setExpanded }) {
     {/* Dados apenas no modo expandido */}
     {expanded && (
       <div className="flex flex-col">
-        <p className="font-semibold">Usuário</p>
-        <p className="text-sm text-slate-600">user@email.com</p>
+        <p className="font-semibold">{usuario.nome}</p>
+        <p className="text-sm text-slate-600">{usuario.email}</p>
       </div>
     )}
   </div>

@@ -8,17 +8,21 @@ import {
   UserPlus,
   Menu,
   X,
+  LogOut,
 } from "lucide-react";
 
 import { Link } from "react-router-dom";
 
 function Navbar({ expanded, setExpanded }) {
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
+
+
   return (
     <aside
       className={`
         h-screen bg-white shadow-md p-6 z-40 fixed top-0 left-0
         transition-all duration-300 flex flex-col
-        ${expanded ? "w-64" : "w-20"}
+        ${expanded ? "w-64" : "w-22"}
       `}
     >
       {/* Botão expandir */}
@@ -27,7 +31,7 @@ function Navbar({ expanded, setExpanded }) {
           e.stopPropagation();
           setExpanded(!expanded);
         }}
-        className="mb-6 cursor-pointer w-2 "
+        className="mb-6 ml-2 cursor-pointer w-2"
       >
         <Menu size={24} />
       </button>
@@ -46,7 +50,7 @@ function Navbar({ expanded, setExpanded }) {
         <ul className="space-y-4 text-slate-950">
           {[
             { to: "/dashboard", icon: House, label: "Dashboard" },
-            { to: "/VisualizarImagens", icon: ImagePlus, label: "Visualizar imagens" },
+            // { to: "/VisualizarImagens", icon: ImagePlus, label: "Visualizar imagens" },
             { to: "/GerarLaudo", icon: FilePlusCorner, label: "Gerar laudo" },
             { to: "/HistoricoLaudos", icon: History, label: "Histórico de laudos" },
             { to: "/CadastroPacientes", icon: UserPlus, label: "Cadastrar paciente" },
@@ -102,8 +106,8 @@ function Navbar({ expanded, setExpanded }) {
     {/* Dados apenas no modo expandido */}
     {expanded && (
       <div className="flex flex-col">
-        <p className="font-semibold">Usuário</p>
-        <p className="text-sm text-slate-600">user@email.com</p>
+        <p className="font-semibold">{usuario.nome}</p>
+        <p className="text-sm text-slate-600">{usuario.email}</p>
       </div>
     )}
   </div>

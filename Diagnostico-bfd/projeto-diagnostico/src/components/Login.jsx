@@ -1,12 +1,9 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
-  const [login, setLogin] = useState(true);
   const [formData, setFormData] = useState({
-    nome: "",
-    cpf: "",
-    cargo: "",
+    tipoUsuario: "",
     email: "",
     senha: "",
   });
@@ -14,111 +11,107 @@ export default function Login() {
   const [mensagem, setMensagem] = useState("");
   const navigate = useNavigate();
 
+  // Usuários simulados sem backend
+  const usuariosFake = [
+    {
+      nome: "Administrador Fulano",
+      email: "admin@teste.com",
+      senha: "123",
+      tipoUsuario: "administrador",
+    },
+    {
+      nome: "Dr. João",
+      email: "medico@teste.com",
+      senha: "123",
+      tipoUsuario: "medico",
+    },
+    {
+      nome: "Maria de Solza",
+      email: "recepcao@teste.com",
+      senha: "123",
+      tipoUsuario: "recepcionista",
+    },
+  ];
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     setMensagem("");
 
-    if (!login && formData.senha !== formData.confirmarSenha) {
-      setMensagem("As senhas não coincidem.");
+    const usuario = usuariosFake.find(
+      (u) =>
+        u.email === formData.email &&
+        u.senha === formData.senha &&
+        u.tipoUsuario === formData.tipoUsuario
+    );
+
+    if (!usuario) {
+      setMensagem("Credenciais inválidas ou tipo de usuário incorreto.");
       return;
     }
 
-    try {
-      const url = login
-        ? "http://localhost:5000/login"
-        : "http://localhost:5000/cadastro";
+    // salvar no localStorage
+    localStorage.setItem(
+      "usuario",
+      JSON.stringify({
+        nome: usuario.nome,
+        tipoUsuario: usuario.tipoUsuario,
+      })
+    );
 
-      const response = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        localStorage.setItem("usuario", JSON.stringify(data.usuario || data));
-        navigate("/dashboard");
-      } else {
-        setMensagem(data.mensagem || "Erro ao processar a solicitação");
-      }
-    } catch (error) {
-      console.error(error);
-      setMensagem("Erro de conexão com o servidor.");
-    }
+    navigate("/dashboard");
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-slate-100 p-4">
       <div className="bg-white shadow-xl rounded-2xl overflow-hidden w-full max-w-4xl flex flex-col md:flex-row">
-        
+
+        {/* FORMULÁRIO */}
         <div className="w-full md:w-1/2 p-8 flex flex-col justify-center">
           <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
-            {login ? "Acesse sua conta" : "Adicionar Novo Usuário"}
+            Acesse sua conta
           </h2>
 
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-            {!login && (
-              <>
-                <input
-                  type="text"
-                  name="nome"
-                  value={formData.nome}
-                  onChange={handleChange}
-                  placeholder="Nome completo"
-                  className="border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  required
-                />
-                <input
-                  type="text"
-                  name="cpf"
-                  value={formData.cpf}
-                  onChange={handleChange}
-                  placeholder="CPF"
-                  className="border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  required
-                />
-                
-                <select
-                  name="cargo"
-                  value={formData.cargo}
-                  onChange={handleChange}
-                  className="border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  required
-                >
-                  <option value="">Selecione o cargo</option>
-                  <option value="medico">Médico</option>
-                  <option value="administrador">Administrador</option>
-                </select>
-              </>
-            )}
+            
+            {/* Tipo usuário */}
+            <select
+              name="tipoUsuario"
+              value={formData.tipoUsuario}
+              onChange={handleChange}
+              className="border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
+              required
+            >
+              <option value="">Quem está acessando?</option>
+              <option value="administrador">Administrador</option>
+              <option value="medico">Médico</option>
+              <option value="recepcionista">Recepcionista</option>
+            </select>
 
-            { <input
+            {/* Email */}
+            <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              placeholder="E-mail institucional / CPF"
-              className="border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="E-mail institucional"
+              className="border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
               required
-            /> }
+            />
 
-
+            {/* Senha */}
             <input
               type="password"
               name="senha"
               value={formData.senha}
               onChange={handleChange}
               placeholder="Senha"
-              className="border rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="border rounded-lg p-2 focus:ring-2 focus:ring-blue-500"
               required
             />
-
-            
 
             {mensagem && (
               <p className="text-center text-red-600 font-semibold">
@@ -126,38 +119,20 @@ export default function Login() {
               </p>
             )}
 
-              
-            <Link
-              to="/dashboard"
-              className="text-center bg-green-600 text-white rounded-lg p-2 mt-2 hover:bg-blue-700 transition-all"
-            >
-              {login ? "Entrar" : "Cadastrar"}
-            </Link>
-          </form>
-
-          <p className="text-center text-gray-600 mt-4">
-           
             <button
-              onClick={() => {
-                setLogin(!login);
-                setMensagem("");
-              }}
-              className="text-blue-600 font-semibold hover:underline"
+              className="text-center cursor-pointer bg-green-600 text-white rounded-lg p-2 mt-2 hover:bg-green-700 transition-all"
+              type="submit"
             >
-              {login ? "" : "Solicitar suporte"}
+              Entrar
             </button>
-          </p>
+          </form>
         </div>
 
-        
+        {/* ILUSTRAÇÃO */}
         <div className="hidden md:flex w-1/2 bg-green-600 items-center justify-center text-white flex-col p-8">
-          <h2 className="text-3xl font-bold mb-4">
-            {login ? "Bem-vindo de volta!" : "Junte-se à nossa equipe!"}
-          </h2>
+          <h2 className="text-3xl font-bold mb-4">Bem-vindo!</h2>
           <p className="text-center text-blue-100">
-            {login
-              ? "Acesse o sistema da unidade de saúde com seu e-mail e senha."
-              : "Crie sua conta e comece a usar o sistema da unidade de saúde."}
+            Acesse o sistema com suas credenciais.
           </p>
         </div>
       </div>

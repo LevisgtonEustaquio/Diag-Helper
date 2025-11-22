@@ -7,7 +7,6 @@ export default function Dashboard({ expanded }) {
   const navigate = useNavigate();
 
   const [usuarios, setUsuarios] = useState([]);
-  const usuario = JSON.parse(localStorage.getItem("usuario"));
 
   const [form, setForm] = useState({
     nome: "",
@@ -16,6 +15,7 @@ export default function Dashboard({ expanded }) {
     status: "Ativo",
   });
 
+  // Modal de confirmação
   const [confirmarSaida, setConfirmarSaida] = useState(false);
 
   const gerarDataHora = () => {
@@ -51,11 +51,6 @@ export default function Dashboard({ expanded }) {
     setUsuarios((prev) => prev.filter((u) => u.id !== id));
   };
 
-  const sair = () => {
-    localStorage.removeItem("usuario");
-    navigate("/");
-  };
-
   const total = usuarios.length;
   const ativos = usuarios.filter((u) => u.status === "Ativo").length;
   const novosHoje = usuarios.filter((u) =>
@@ -63,33 +58,26 @@ export default function Dashboard({ expanded }) {
   ).length;
 
   return (
-    <div className="min-h-screen bg-gray-100 flex w-full overflow-x-hidden">
+    <div className="min-h-screen bg-gray-100 flex overflow-x-hidden">
 
-      {/* NAVBAR */}
       <Navbar expanded={expanded} />
 
-      {/* MAIN CONTENT */}
+      {/* MAIN */}
       <main
         className={`
-          flex-1 p-4 sm:p-6 transition-all duration-300 w-full overflow-x-hidden
-          pl-0 md:pl-20
-          ${expanded ? "lg:pl-64" : "lg:pl-20"}
+          flex-1 p-6 transition-all duration-300 
+          ${expanded ? "md:ml-64" : "md:ml-20"}
         `}
       >
-        {/* HEADER */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-3">
-          <h1 className="text-2xl font-bold leading-tight">
-            Bem-vindo{" "}
-            <span className="capitalize">
-              {usuario?.tipoUsuario} {usuario?.nome}
-            </span>
-          </h1>
+        {/* Cabeçalho */}
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-bold">Dashboard</h1>
 
           <button
             onClick={() => setConfirmarSaida(true)}
-            className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 flex items-center gap-2 shadow-md"
+            className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700"
           >
-            <LogOut /> Sair
+            <LogOut size={20} /> Sair
           </button>
         </div>
 
@@ -101,7 +89,7 @@ export default function Dashboard({ expanded }) {
         </div>
 
         {/* FORM */}
-        <section className="bg-white p-4 sm:p-6 shadow rounded mb-6">
+        <section className="bg-white p-4 shadow rounded mb-6">
           <h2 className="text-lg font-bold mb-4">Novo Usuário</h2>
 
           <form
@@ -136,22 +124,22 @@ export default function Dashboard({ expanded }) {
             </select>
 
             <button
-              className="bg-blue-600 text-white rounded p-2 mt-2 hover:bg-blue-700 w-full sm:w-auto"
               type="submit"
+              className="bg-blue-600 text-white p-2 rounded mt-2 hover:bg-blue-700 w-full sm:w-auto"
             >
               Salvar
             </button>
           </form>
         </section>
 
-        {/* TABLE */}
-        <section className="bg-white p-4 sm:p-6 shadow rounded">
+        {/* TABELA */}
+        <section className="bg-white p-4 shadow rounded">
           <h2 className="text-lg font-bold mb-4">Usuários Cadastrados</h2>
 
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="min-w-full text-sm">
               <thead>
-                <tr className="bg-gray-200 text-left">
+                <tr className="bg-gray-200">
                   <Th>Nome</Th>
                   <Th>CPF</Th>
                   <Th>Cargo</Th>
@@ -163,20 +151,16 @@ export default function Dashboard({ expanded }) {
 
               <tbody>
                 {usuarios.map((u) => (
-                  <tr
-                    key={u.id}
-                    className="border-b hover:bg-gray-50 transition"
-                  >
+                  <tr key={u.id} className="border-b">
                     <Td>{u.nome}</Td>
                     <Td>{u.cpf}</Td>
                     <Td>{u.cargo}</Td>
                     <Td>{u.status}</Td>
                     <Td>{u.criadoEm}</Td>
-
                     <Td>
                       <button
                         onClick={() => remover(u.id)}
-                        className="text-red-600 font-medium hover:underline"
+                        className="text-red-600 hover:underline"
                       >
                         Excluir
                       </button>
@@ -189,10 +173,10 @@ export default function Dashboard({ expanded }) {
         </section>
       </main>
 
-      {/* MODAL DE SAÍDA */}
+      {/* MODAL SAIR */}
       {confirmarSaida && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4">
-          <div className="bg-white p-6 rounded shadow-2xl w-full max-w-sm">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded shadow-lg">
             <p className="text-lg font-semibold mb-4">
               Tem certeza que deseja sair?
             </p>
@@ -206,7 +190,10 @@ export default function Dashboard({ expanded }) {
               </button>
 
               <button
-                onClick={sair}
+                onClick={() => {
+                  localStorage.removeItem("usuario");
+                  navigate("/");
+                }}
                 className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
               >
                 Sair
@@ -219,7 +206,7 @@ export default function Dashboard({ expanded }) {
   );
 }
 
-/* COMPONENTES REUTILIZÁVEIS */
+/* COMPONENTES AUXILIARES */
 function Card({ title, value }) {
   return (
     <div className="bg-white p-4 shadow rounded text-center">

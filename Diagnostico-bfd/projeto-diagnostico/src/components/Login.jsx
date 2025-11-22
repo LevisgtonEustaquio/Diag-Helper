@@ -53,7 +53,6 @@ export default function Login() {
       return;
     }
 
-    // salvar no localStorage
     localStorage.setItem(
       "usuario",
       JSON.stringify({
@@ -66,7 +65,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-100 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4">
       <div className="bg-white shadow-xl rounded-2xl overflow-hidden w-full max-w-4xl flex flex-col md:flex-row">
 
         {/* FORMULÁRIO */}
@@ -76,8 +75,7 @@ export default function Login() {
           </h2>
 
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-            
-            {/* Tipo usuário */}
+
             <select
               name="tipoUsuario"
               value={formData.tipoUsuario}
@@ -91,7 +89,6 @@ export default function Login() {
               <option value="recepcionista">Recepcionista</option>
             </select>
 
-            {/* Email */}
             <input
               type="email"
               name="email"
@@ -102,7 +99,6 @@ export default function Login() {
               required
             />
 
-            {/* Senha */}
             <input
               type="password"
               name="senha"
@@ -120,7 +116,7 @@ export default function Login() {
             )}
 
             <button
-              className="text-center cursor-pointer bg-green-600 text-white rounded-lg p-2 mt-2 hover:bg-green-700 transition-all"
+              className="text-center bg-green-600 text-white rounded-lg p-2 mt-2 hover:bg-green-700 transition-all"
               type="submit"
             >
               Entrar

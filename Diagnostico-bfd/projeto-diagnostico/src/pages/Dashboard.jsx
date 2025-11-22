@@ -1,14 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { LogOut } from 'lucide-react';
+import { LogOut } from "lucide-react";
 
 export default function Dashboard({ expanded }) {
   const navigate = useNavigate();
 
   const [usuarios, setUsuarios] = useState([]);
-
-  const usuario = JSON.parse(localStorage.getItem("usuario"));
 
   const [form, setForm] = useState({
     nome: "",
@@ -17,10 +15,10 @@ export default function Dashboard({ expanded }) {
     status: "Ativo",
   });
 
-  // Estado do modal de confirmação
+  // Modal de confirmação
   const [confirmarSaida, setConfirmarSaida] = useState(false);
 
-  function gerarDataHora() {
+  const gerarDataHora = () => {
     const agora = new Date();
     const data = agora.toLocaleDateString("pt-BR");
     const hora = agora.toLocaleTimeString("pt-BR", {
@@ -28,9 +26,9 @@ export default function Dashboard({ expanded }) {
       minute: "2-digit",
     });
     return `${data} ${hora}`;
-  }
+  };
 
-  function cadastrar(e) {
+  const cadastrar = (e) => {
     e.preventDefault();
 
     const novoUsuario = {
@@ -39,7 +37,7 @@ export default function Dashboard({ expanded }) {
       criadoEm: gerarDataHora(),
     };
 
-    setUsuarios([...usuarios, novoUsuario]);
+    setUsuarios((prev) => [...prev, novoUsuario]);
 
     setForm({
       nome: "",
@@ -47,16 +45,11 @@ export default function Dashboard({ expanded }) {
       cargo: "",
       status: "Ativo",
     });
-  }
+  };
 
-  function remover(id) {
-    setUsuarios(usuarios.filter((u) => u.id !== id));
-  }
-
-  function sair() {
-    localStorage.removeItem("usuario");
-    navigate("/");
-  }
+  const remover = (id) => {
+    setUsuarios((prev) => prev.filter((u) => u.id !== id));
+  };
 
   const total = usuarios.length;
   const ativos = usuarios.filter((u) => u.status === "Ativo").length;
@@ -65,79 +58,60 @@ export default function Dashboard({ expanded }) {
   ).length;
 
   return (
-    <div className="min-h-screen bg-gray-100 flex w-full">
+    <div className="min-h-screen bg-gray-100 flex overflow-x-hidden">
+
       <Navbar expanded={expanded} />
 
+      {/* MAIN */}
       <main
-        className={`flex-1 p-4 sm:p-6 transition-all duration-300 w-full 
-        ${expanded ? "ml-20 sm:ml-64" : "ml-20"}`}
+        className={`
+          flex-1 p-6 transition-all duration-300 
+          ${expanded ? "md:ml-64" : "md:ml-20"}
+        `}
       >
-
-        {/* HEADER COM BOTÃO DE SAIR */}
+        {/* Cabeçalho */}
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold capitalize">
-            Bem-vindo {usuario?.tipoUsuario} {usuario?.nome}
-          </h1>
+          <h1 className="text-2xl font-bold">Dashboard</h1>
 
           <button
             onClick={() => setConfirmarSaida(true)}
-            className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 flex flex-row gap-2 shadow-lg cursor-pointer"
+            className="flex items-center gap-2 bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700"
           >
-           <LogOut /> Sair 
+            <LogOut size={20} /> Sair
           </button>
         </div>
 
         {/* CARDS */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-4 mb-6">
-          <div className="bg-white p-4 shadow rounded">
-            <p className="text-gray-600">Total de Usuários</p>
-            <p className="text-2xl font-bold">{total}</p>
-          </div>
-
-          <div className="bg-white p-4 shadow rounded">
-            <p className="text-gray-600">Ativos</p>
-            <p className="text-2xl font-bold">{ativos}</p>
-          </div>
-
-          <div className="bg-white p-4 shadow rounded">
-            <p className="text-gray-600">Cadastros Hoje</p>
-            <p className="text-2xl font-bold">{novosHoje}</p>
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+          <Card title="Total de Usuários" value={total} />
+          <Card title="Ativos" value={ativos} />
+          <Card title="Cadastros Hoje" value={novosHoje} />
         </div>
 
-        {/* FORMULÁRIO */}
-        <div className="bg-white p-4 shadow rounded mb-6">
+        {/* FORM */}
+        <section className="bg-white p-4 shadow rounded mb-6">
           <h2 className="text-lg font-bold mb-4">Novo Usuário</h2>
 
           <form
             onSubmit={cadastrar}
             className="grid grid-cols-1 sm:grid-cols-2 gap-4"
           >
-            <input
-              type="text"
-              placeholder="Nome"
-              className="border p-2 rounded w-full"
+            <Input
+              label="Nome"
               value={form.nome}
               onChange={(e) => setForm({ ...form, nome: e.target.value })}
-              required
             />
 
-            <input
-              type="text"
-              placeholder="CPF"
-              className="border p-2 rounded w-full"
+            <Input
+              label="CPF"
               value={form.cpf}
               onChange={(e) => setForm({ ...form, cpf: e.target.value })}
-              required
             />
 
-            <input
-              type="text"
-              placeholder="Cargo"
-              className="border p-2 rounded w-full"
+            <Input
+              label="Cargo"
               value={form.cargo}
               onChange={(e) => setForm({ ...form, cargo: e.target.value })}
-              required
             />
 
             <select
@@ -150,60 +124,59 @@ export default function Dashboard({ expanded }) {
             </select>
 
             <button
-              className="bg-blue-600 text-white rounded p-2 mt-2 hover:bg-blue-700 w-full sm:w-auto"
               type="submit"
+              className="bg-blue-600 text-white p-2 rounded mt-2 hover:bg-blue-700 w-full sm:w-auto"
             >
               Salvar
             </button>
           </form>
-        </div>
+        </section>
 
         {/* TABELA */}
-        <div className="bg-white p-4 shadow rounded">
+        <section className="bg-white p-4 shadow rounded">
           <h2 className="text-lg font-bold mb-4">Usuários Cadastrados</h2>
 
-          <div className="overflow-x-auto w-full">
-            <table className="w-full min-w-max text-sm">
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-sm">
               <thead>
-                <tr className="bg-gray-200 text-left">
-                  <th className="px-3 py-2">Nome</th>
-                  <th className="px-3 py-2">CPF</th>
-                  <th className="px-3 py-2">Cargo</th>
-                  <th className="px-3 py-2">Status</th>
-                  <th className="px-3 py-2">Criado em</th>
-                  <th className="px-3 py-2">Ações</th>
+                <tr className="bg-gray-200">
+                  <Th>Nome</Th>
+                  <Th>CPF</Th>
+                  <Th>Cargo</Th>
+                  <Th>Status</Th>
+                  <Th>Criado em</Th>
+                  <Th>Ações</Th>
                 </tr>
               </thead>
 
               <tbody>
                 {usuarios.map((u) => (
                   <tr key={u.id} className="border-b">
-                    <td className="px-3 py-2">{u.nome}</td>
-                    <td className="px-3 py-2">{u.cpf}</td>
-                    <td className="px-3 py-2">{u.cargo}</td>
-                    <td className="px-3 py-2">{u.status}</td>
-                    <td className="px-3 py-2">{u.criadoEm}</td>
-
-                    <td className="px-3 py-2">
+                    <Td>{u.nome}</Td>
+                    <Td>{u.cpf}</Td>
+                    <Td>{u.cargo}</Td>
+                    <Td>{u.status}</Td>
+                    <Td>{u.criadoEm}</Td>
+                    <Td>
                       <button
                         onClick={() => remover(u.id)}
                         className="text-red-600 hover:underline"
                       >
                         Excluir
                       </button>
-                    </td>
+                    </Td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-        </div>
+        </section>
       </main>
 
-      {/* MODAL DE CONFIRMAÇÃO */}
+      {/* MODAL SAIR */}
       {confirmarSaida && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white p-6 rounded shadow-lg w-80">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded shadow-lg">
             <p className="text-lg font-semibold mb-4">
               Tem certeza que deseja sair?
             </p>
@@ -217,7 +190,10 @@ export default function Dashboard({ expanded }) {
               </button>
 
               <button
-                onClick={sair}
+                onClick={() => {
+                  localStorage.removeItem("usuario");
+                  navigate("/");
+                }}
                 className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
               >
                 Sair
@@ -228,4 +204,34 @@ export default function Dashboard({ expanded }) {
       )}
     </div>
   );
+}
+
+/* COMPONENTES AUXILIARES */
+function Card({ title, value }) {
+  return (
+    <div className="bg-white p-4 shadow rounded text-center">
+      <p className="text-gray-600">{title}</p>
+      <p className="text-3xl font-bold">{value}</p>
+    </div>
+  );
+}
+
+function Input({ label, ...props }) {
+  return (
+    <input
+      type="text"
+      placeholder={label}
+      className="border p-2 rounded w-full"
+      {...props}
+      required
+    />
+  );
+}
+
+function Th({ children }) {
+  return <th className="px-3 py-2 font-semibold">{children}</th>;
+}
+
+function Td({ children }) {
+  return <td className="px-3 py-2">{children}</td>;
 }
